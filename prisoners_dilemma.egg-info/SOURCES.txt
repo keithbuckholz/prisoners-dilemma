@@ -1,5 +1,6 @@
 setup.py
 prisoners_dilemma/__init__.py
+prisoners_dilemma/__main__.py
 prisoners_dilemma/test.py
 prisoners_dilemma.egg-info/PKG-INFO
 prisoners_dilemma.egg-info/SOURCES.txt

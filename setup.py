@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-     name="prisoners_dilemma",
+     name="prisoners-dilemma",
      version="0.1",
      author="Keith Buckholz",
      author_email="keith.buckholz@yale.edu",
@@ -9,4 +9,9 @@ setuptools.setup(
      packages=["prisoners_dilemma", "prisoners_dilemma/bots", "prisoners_dilemma/game"],
      python_requires=">=3",
      install_requires=["numpy", "matplotlib"]
+     # entry_points={
+     #      "console_scripts" : [
+     #           "prisoners_dilemma = game/tournament"
+     #      ]
+     # }
 )

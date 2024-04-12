@@ -15,12 +15,10 @@ from inspect import isfunction
 from prisoners_dilemma import bots
 
 # Extract all callable functions from "bot" module
-list_of_players = []
-
 def define_players():
 	list_of_players = [getattr(bots, item) for item in dir(bots) 
     	               if isfunction(getattr(bots, item))]
-	return 0
+	return list_of_players
 
 class prisoners_dilemma():
 	
@@ -154,9 +152,9 @@ class population_mode(prisoners_dilemma):
 	
 
 # Code allowing Command-line usage is below this comment
-if len(sys.argv) > 1:
-	if sys.argv[1] == "tournament":
-		prisoners_dilemma(list_of_players).tournament()
+def tournament():
+	list_of_players = define_players()
+	prisoners_dilemma(list_of_players).tournament()
 
 # if len(sys.argv) > 1:
 # 	if sys.argv[1] == "population":
