@@ -8,10 +8,11 @@ setuptools.setup(
      description="Prisoner's Dilemma Simulation",
      packages=["prisoners_dilemma", "prisoners_dilemma/bots", "prisoners_dilemma/game"],
      python_requires=">=3",
-     install_requires=["numpy", "matplotlib"]
-     # entry_points={
-     #      "console_scripts" : [
-     #           "prisoners_dilemma = game/tournament"
-     #      ]
-     # }
+     install_requires=["numpy", "matplotlib"],
+     entry_points={
+          "console_scripts" : [
+               "dilemma-tournament = prisoners_dilemma.game:tournament",
+               "dilemma-population = prisoners_dilemma.game:population",
+          ]
+     }
 )

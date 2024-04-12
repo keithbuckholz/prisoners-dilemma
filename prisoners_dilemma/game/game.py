@@ -15,23 +15,28 @@ from inspect import isfunction
 from prisoners_dilemma import bots
 
 # Extract all callable functions from "bot" module
-def define_players():
+def define_players(players):
+	"""
+	Defines list_of_players using built-in bots, plus any algorithms provided by the user.
+	"""
 	list_of_players = [getattr(bots, item) for item in dir(bots) 
     	               if isfunction(getattr(bots, item))]
+	if not players==None:
+		list_of_players.append(players)
 	return list_of_players
 
 class dilemma_tournament():
 	
-	def __init__(self, players, n_rounds=None):
+	def __init__(self, players=None, n_rounds=None):
 		# Player Algorithms
-		self.players = [bot for bot in players]
+		self.players = define_players(players)
 		# Number of rounds in each matchup
 		self.n_rounds = n_rounds
 		self.rng = np.random.default_rng()
 		# Instance attirbutes for tracking wins/losses
 		self.all_results = []
 		self.readable_results = []
-		self.final_scores = {player.__name__: 0 for player in players}
+		self.final_scores = {player.__name__: 0 for player in self.players}
 
 
 	def award_points(self, decision_1, decision_2):
@@ -48,17 +53,17 @@ class dilemma_tournament():
 		"""
 
 		# Check decisions and award points
-		if decision_1: # Decision are boolean values where true is cooperation.
+		if decision_1: # Decision are boolean values where True==Cooperate
 			if not decision_2:
-				return (-1, 3)
+				return (-1, 3) # Cooperate/Defect
 			elif decision_2:
-				return (2, 2)
+				return (2, 2) # Cooperate/Cooperate
 		
 		elif not decision_1:
 			if not decision_2:
-				return (0, 0)
+				return (0, 0) # Defect/Defect
 			elif decision_2:
-				return (3, -1)
+				return (3, -1) # Defect/Cooperate
 
 		raise ValueError
 
@@ -145,17 +150,30 @@ class population_mode(dilemma_tournament):
 	the simulation ends.
 	"""
 
-	def __init___(self, players, n_rounds=None, inital_pop=10, field_size=(100, 100)):
+	def __init___(self, players, n_rounds=None, inital_pop=10, field_size=(20, 20)):
 		super().__init__(players, n_rounds)
 		self.field = np.zeros(field_size)
 
+	def spawn(init=False):
+		self.field[ii,nn] = self.rng.choice(self.players)
+		return self
+
+	def display():
+		plt.imshow(self.field)
+
 	
 
-# Code allowing Command-line usage is below this comment
+# Code allowing command line usage is below this comment
 def tournament():
-	list_of_players = define_players()
-	dilemma_tounament(list_of_players).tournament()
+	"""
+	Runs tournament with built-in bots in the command line
+	"""
+	dilemma_tournament().tournament()
+	return 0
 
-# if len(sys.argv) > 1:
-# 	if sys.argv[1] == "population":
-# 		population_mode(list_of_players).gambit()
+def population():
+	"""
+	Runs population simulation with built-in bots using command line
+	"""
+	print("TODO")
+	return 1

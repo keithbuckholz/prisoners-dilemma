@@ -1,0 +1,3 @@
+[console_scripts]
+dilemma-population = prisoners_dilemma.game:population
+dilemma-tournament = prisoners_dilemma.game:tournament
