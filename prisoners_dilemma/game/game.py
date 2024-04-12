@@ -2,7 +2,7 @@
 Inspiration: https://www.youtube.com/watch?v=mScpHTIi-kM
 This has already been done: https://ncase.me/trust/
 
-This script runs a prisoner's dilemna simulation with mutliple participants 
+This script runs a prisoner's dilemma simulation with mutliple participants 
 over an unknown number of rounds.
 
 All player algorithms must be functions stored in a file name bots.py, which will be imported to run the simulation.
@@ -12,7 +12,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from inspect import isfunction
-import bots
+from prisoners_dilemma import bots
 
 # Extract all callable functions from "bot" module
 list_of_players = []
@@ -38,7 +38,7 @@ class prisoners_dilemma():
 
 	def award_points(self, decision_1, decision_2):
 		"""
-		Awards points for decisions on a single prisoner's dilemna. Decisions
+		Awards points for decisions on a single prisoner's dilemma. Decisions
 		will be evaluated as booleans where True is Cooperation.
 
 		Parameters
@@ -67,7 +67,7 @@ class prisoners_dilemma():
 
 	def matchup(self, bot_1, bot_2):
 		"""
-		This method runs n rounds of the prisoners dilemna by calling the award_points method n times.
+		This method runs n rounds of the prisoners dilemma by calling the award_points method n times.
 		This method records all match information to all_results instance attribute, and awards points
 		to the final_score instance attribute.
 
@@ -93,7 +93,7 @@ class prisoners_dilemma():
 			decision_1 = bot_1(bot_2_history)
 			decision_2 = bot_2(bot_1_history)
 
-			# Run dilemna, store score_tuple
+			# Run dilemma, store score_tuple
 			score_tuple = self.award_points(decision_1, decision_2)
 
 			# Unpack score_tuple and update scores
@@ -138,12 +138,13 @@ class prisoners_dilemma():
 		return self
 	
 
-if len(sys.argv) > 1:
-	if sys.argv[1] == "tournament":
-		prisoners_dilemna(list_of_players).tournament()
-
-class population_mode(prisoners_dilemna):
+class population_mode(prisoners_dilemma):
 	"""
+	This class places player algorithms on a map. Each round tests each 
+	algorithm against only it's neighbors N times. Then, the worst performing
+	fifth of the population randomly changes strategies. After some number of
+	rounds or when the top four-fifths of the population is the same algorithm,
+	the simulation ends.
 	"""
 
 	def __init___(self, players, n_rounds=None, inital_pop=10, field_size=(100, 100)):
@@ -152,3 +153,11 @@ class population_mode(prisoners_dilemna):
 
 	
 
+# Code allowing Command-line usage is below this comment
+if len(sys.argv) > 1:
+	if sys.argv[1] == "tournament":
+		prisoners_dilemma(list_of_players).tournament()
+
+# if len(sys.argv) > 1:
+# 	if sys.argv[1] == "population":
+# 		population_mode(list_of_players).gambit()
