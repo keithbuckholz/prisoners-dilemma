@@ -1,1 +1,1 @@
-from .game import prisoners_dilemma, population_mode, tournament
+from .game import dilemma_tournament, population_mode, define_players, tournament

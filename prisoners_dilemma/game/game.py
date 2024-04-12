@@ -20,7 +20,7 @@ def define_players():
     	               if isfunction(getattr(bots, item))]
 	return list_of_players
 
-class prisoners_dilemma():
+class dilemma_tournament():
 	
 	def __init__(self, players, n_rounds=None):
 		# Player Algorithms
@@ -136,7 +136,7 @@ class prisoners_dilemma():
 		return self
 	
 
-class population_mode(prisoners_dilemma):
+class population_mode(dilemma_tournament):
 	"""
 	This class places player algorithms on a map. Each round tests each 
 	algorithm against only it's neighbors N times. Then, the worst performing
@@ -154,7 +154,7 @@ class population_mode(prisoners_dilemma):
 # Code allowing Command-line usage is below this comment
 def tournament():
 	list_of_players = define_players()
-	prisoners_dilemma(list_of_players).tournament()
+	dilemma_tounament(list_of_players).tournament()
 
 # if len(sys.argv) > 1:
 # 	if sys.argv[1] == "population":

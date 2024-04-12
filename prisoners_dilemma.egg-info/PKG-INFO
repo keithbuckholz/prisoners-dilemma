@@ -5,3 +5,5 @@ Summary: Prisoner's Dilemma Simulation
 Author: Keith Buckholz
 Author-email: keith.buckholz@yale.edu
 Requires-Python: >=3
+Requires-Dist: numpy
+Requires-Dist: matplotlib

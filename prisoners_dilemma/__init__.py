@@ -1,3 +1,3 @@
 from . import bots, game
 from .bots import *
-from .game import prisoners_dilemma, population_mode
+from .game import dilemma_tournament, population_mode, define_players, tournament
