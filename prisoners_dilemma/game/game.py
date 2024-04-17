@@ -26,6 +26,17 @@ def define_players(players):
 	return list_of_players
 
 class dilemma_tournament():
+	"""
+	The Prisoner's Dilemma is a game between two players. The players may 
+	choose to "cooperate" or "defect." Both players cooperations grants both
+	players 2 points. Both players defection grants no points. If one player
+	defect while the other cooperates, the defector gets 3 points and the 
+	cooperator gets -1 points.
+
+	This class runs a tournament of prisoner's dilemmas. It calls the 
+	Define_players function to define the player algorithms. Then tests
+	each algorithm against every other algorithm and prints the final results.
+	"""
 	
 	def __init__(self, players=None, n_rounds=None):
 		# Player Algorithms
@@ -122,7 +133,7 @@ class dilemma_tournament():
 
 		Parameters
 		----------
-		show_scores: bool
+		show_scores: bool, False
 			Prints the final scores
 		show_match_info: bool
 			Prints all matches' information.
@@ -150,16 +161,48 @@ class population_mode(dilemma_tournament):
 	the simulation ends.
 	"""
 
-	def __init___(self, players, n_rounds=None, inital_pop=10, field_size=(20, 20)):
+	def __init__(self, players=None, n_rounds=None, field_size=(20, 20)):
 		super().__init__(players, n_rounds)
 		self.field = np.zeros(field_size)
+		enumeration = enumerate(define_players(players))
+		self.players = {number: player for number, player in enumeration}
 
-	def spawn(init=False):
-		self.field[ii,nn] = self.rng.choice(self.players)
+	def spawn(self, init=False):
+		if init:
+			for ii in range(self.field.shape[0]):
+				for nn in range(self.field.shape[1]):
+					self.field[ii,nn] = self.rng.choice(list(self.players.keys()))
 		return self
 
-	def display():
+	def round(self):
+		"""
+		Runs a single round 
+		"""
+		field
+		return self
+
+	def display(self):
+		"""
+		This method displays the current population field. 
+	
+		No Parameters.
+		"""
+		self.spawn(init=True)
 		plt.imshow(self.field)
+		return self
+
+	def run(self, show_steps=False):
+		"""
+		This method runs the population simulation to it's conclusion.
+
+		Parameters
+		----------
+		show_steps: bool
+			Displays the field at every step.
+		"""
+		self.spawn(init=True)
+		self.display()
+		return self
 
 	
 
@@ -168,6 +211,11 @@ def tournament():
 	"""
 	Runs tournament with built-in bots in the command line
 	"""
+	if len(sys.argv) > 1:
+		# check that sys.argv[1] is a python file containing functions
+		# import functions from provided file
+		# check that functions take appropriate argument and provide only bool
+		print("TODO")
 	dilemma_tournament().tournament()
 	return 0
 
@@ -175,5 +223,5 @@ def population():
 	"""
 	Runs population simulation with built-in bots using command line
 	"""
-	print("TODO")
-	return 1
+	population_mode().display()
+	return 0
