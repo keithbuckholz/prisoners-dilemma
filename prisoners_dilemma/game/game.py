@@ -9,20 +9,37 @@ All player algorithms must be functions stored in a file name bots.py, which wil
 """
 
 import sys
+import importlib
 import numpy as np
 import matplotlib.pyplot as plt
 from inspect import isfunction
 from prisoners_dilemma import bots
 
-# Extract all callable functions from "bot" module
+def import_user_bots(filename):
+	try:
+		# Try to import the package
+		module = importlib.import_module(filename)
+		return module
+	
+	except ImportError:
+		print(f"Error: Unable to import '{filename}'.")
+		return 1
+
 def define_players(players):
 	"""
 	Defines list_of_players using built-in bots, plus any algorithms provided by the user.
 	"""
+	# Import built-ins
 	list_of_players = [getattr(bots, item) for item in dir(bots) 
     	               if isfunction(getattr(bots, item))]
+	
+	# If defined, import player algorithms
 	if not players==None:
-		list_of_players.append(players)
+		user_bots = [getattr(players, item) for item in dir(players) 
+    	               if isfunction(getattr(players, item))]
+		list_of_players.extend(user_bots)
+
+	# Return full list of player algorithms
 	return list_of_players
 
 class dilemma_tournament():
@@ -190,9 +207,9 @@ class population_mode(dilemma_tournament):
 					(ii + 1, nn),  # Bottom neighbor
 					(ii, nn - 1),  # Left neighbor
 					(ii, nn + 1),  # Right neighbor
-					(ii - 1, nn - 1) # Top-left neighbor
-					(ii + 1, nn - 1) # Bottom-left neighbor
-					(ii + 1, nn + 1) # Bottom-right neighbor
+					(ii - 1, nn - 1), # Top-left neighbor
+					(ii + 1, nn - 1), # Bottom-left neighbor
+					(ii + 1, nn + 1), # Bottom-right neighbor
 					(ii - 1, nn + 1) # Top-right neighbor
 				]
 
@@ -209,7 +226,8 @@ class population_mode(dilemma_tournament):
 		return self
 	
 	def lowest_value(self):
-		
+		print("TODO")
+		return self
 
 	def display(self):
 		"""
@@ -246,17 +264,34 @@ def tournament():
 	"""
 	Runs tournament with built-in bots in the command line
 	"""
+
+	module=None
+
+	# If player define bot file to include
 	if len(sys.argv) > 1:
-		# check that sys.argv[1] is a python file containing functions
-		# import functions from provided file
-		# check that functions take appropriate argument and provide only bool
-		print("TODO")
-	dilemma_tournament().tournament()
+		# Parse user input
+		players = sys.argv[1]
+		if players[-3:].lower == ".py":
+			players = players[:-3]
+
+		# Import user algorithms, and set variable to track module
+		module = import_user_bots(players)
+
+	# Run tournament. If user did not define file, module==None
+	dilemma_tournament(players=module).tournament()
 	return 0
 
 def population():
 	"""
 	Runs population simulation with built-in bots using command line
 	"""
+
 	population_mode().display()
+	return 0
+
+def credits():
+	print("""
+	Inspiration: https://www.youtube.com/watch?v=mScpHTIi-kM
+	This has already been done: https://ncase.me/trust/
+	""")
 	return 0
