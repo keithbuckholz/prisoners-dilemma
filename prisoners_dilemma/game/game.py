@@ -166,9 +166,11 @@ class population_mode(dilemma_tournament):
 		self.field = np.zeros(field_size)
 		enumeration = enumerate(define_players(players))
 		self.players = {number: player for number, player in enumeration}
+		# Temporary n_rounds value
+		self.n_rounds = 10
 
-	def spawn(self, init=False):
-		if init:
+	def spawn(self, replace_indicies=None):
+		if not replaces_indicies:
 			for ii in range(self.field.shape[0]):
 				for nn in range(self.field.shape[1]):
 					self.field[ii,nn] = self.rng.choice(list(self.players.keys()))
@@ -178,8 +180,36 @@ class population_mode(dilemma_tournament):
 		"""
 		Runs a single round 
 		"""
-		field
+		for ii in self.field.shape()[0]:
+			for nn in self.field.shape()[1]:
+
+				# Define this bot and identify neighbors
+				this_bot = self.field[ii, nn]
+				neighbor_indices = [
+					(ii - 1, nn),  # Top neighbor
+					(ii + 1, nn),  # Bottom neighbor
+					(ii, nn - 1),  # Left neighbor
+					(ii, nn + 1),  # Right neighbor
+					(ii - 1, nn - 1) # Top-left neighbor
+					(ii + 1, nn - 1) # Bottom-left neighbor
+					(ii + 1, nn + 1) # Bottom-right neighbor
+					(ii - 1, nn + 1) # Top-right neighbor
+				]
+
+				# Filter out edge cases
+				valid_neighbor_indices = [(jj, kk) for jj, kk in neighbor_indices 
+										  if 0 <= jj < self.field.shape[0] and 
+										  0 <= kk < self.field.shape[1]]
+
+				# Turn neighbor indicies into functions
+				neighbors = [self.field[inidex] for index in valid_neighbor_indices]
+				for neighbor in neighbors:
+					self.matchup(self.players[this_bot], self.players[neighbor])
+		self.n_rounds -= 1 
 		return self
+	
+	def lowest_value(self):
+		
 
 	def display(self):
 		"""
@@ -200,7 +230,12 @@ class population_mode(dilemma_tournament):
 		show_steps: bool
 			Displays the field at every step.
 		"""
-		self.spawn(init=True)
+		self.spawn()
+		self.display()
+		while self.n_rounds > 0:
+			self.round()
+			self.lowest_value()
+			self.spanw()
 		self.display()
 		return self
 

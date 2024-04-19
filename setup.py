@@ -13,6 +13,7 @@ setuptools.setup(
           "console_scripts" : [
                "dilemma-tournament = prisoners_dilemma.game:tournament",
                "dilemma-population = prisoners_dilemma.game:population",
+               "dilemma-credits = prisoners_dilemma.game:credits"
           ]
      }
 )
