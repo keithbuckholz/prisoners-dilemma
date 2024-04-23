@@ -1,3 +1,4 @@
 prisoners_dilemma
 prisoners_dilemma/bots
-prisoners_dilemma/game
+prisoners_dilemma/population
+prisoners_dilemma/tournament

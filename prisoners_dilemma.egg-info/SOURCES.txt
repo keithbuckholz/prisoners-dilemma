@@ -8,5 +8,7 @@ prisoners_dilemma.egg-info/requires.txt
 prisoners_dilemma.egg-info/top_level.txt
 prisoners_dilemma/bots/__init__.py
 prisoners_dilemma/bots/bots.py
-prisoners_dilemma/game/__init__.py
-prisoners_dilemma/game/game.py
+prisoners_dilemma/population/__init__.py
+prisoners_dilemma/population/population.py
+prisoners_dilemma/tournament/__init__.py
+prisoners_dilemma/tournament/tournament.py

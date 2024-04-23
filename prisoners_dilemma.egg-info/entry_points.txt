@@ -1,4 +1,4 @@
 [console_scripts]
-dilemma-credits = prisoners_dilemma.game:credits
-dilemma-population = prisoners_dilemma.game:population
-dilemma-tournament = prisoners_dilemma.game:tournament
+dilemma-credits = prisoners_dilemma.tournament:credits
+dilemma-population = prisoners_dilemma.population:population
+dilemma-tournament = prisoners_dilemma.tournament:tournament

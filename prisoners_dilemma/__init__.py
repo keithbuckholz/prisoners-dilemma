@@ -1,9 +1,11 @@
-from . import bots, game
+from . import bots, tournament, population
 from .bots import *
-from .game import (
+from .tournament import (
     define_players,
     dilemma_tournament, 
-    population,
-    population_mode,
     tournament
     )
+from .population import (
+    population_mode,
+    population
+)

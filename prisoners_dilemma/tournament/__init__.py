@@ -1,7 +1,6 @@
-from .game import (
+from .tournament import (
+    credits,
     define_players,
     dilemma_tournament, 
-    population,
-    population_mode,
     tournament
     )
