@@ -192,24 +192,11 @@ class population_mode(dilemma_tournament):
 			plt.imshow(norm_state, cmap=cmap_custom)
 			plt.title(f"Evolution step:{ii:02d}")
 
+			# Create colorbar key
 			unique_values = np.unique(state)
 			cbar = plt.colorbar()
 			cbar.set_ticks([key/len(self.players) for key in self.players.keys()])
 			cbar.set_ticklabels([function.__name__ for function in self.players.values()]) 
-
-			# # Make legend 
-			# unique_values = np.unique(state)
-			# legend_handles = []
-			# for value, function in [(key, self.players[key]) for key in unique_values]:
-			# 	# Create a patch with the same color as the value
-			# 	patch = plt.matplotlib.patches.Patch(
-			# 			color=plt.cm.viridis(value / np.max(state)), 
-			# 			label=function.__name__)
-			# 	legend_handles.append(patch)
-
-			# # Add legend to the plot
-			# plt.legend(handles=legend_handles, loc=1, 
-			#            fontsize="xx-small")
 
 			# Create a folder for the images, prepare the filename
 			output_dir = "./dilemma-fields"
