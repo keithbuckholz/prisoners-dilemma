@@ -1,7 +1,9 @@
+import os
 import sys
 from prisoners_dilemma.tournament import dilemma_tournament, define_players
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import imageio
 
 class population_mode(dilemma_tournament):
@@ -13,18 +15,33 @@ class population_mode(dilemma_tournament):
 	the simulation ends.
 	"""
 
-	def __init__(self, players=None, n_rounds=None, evolutions=None, field_size=(20, 20)):
+	def __init__(self, players=None, n_rounds=None, evolutions=100,
+	             field_size=(10, 10), rng_seed=None, quantile=0.2,
+				 win_condition=0.5):
 		super().__init__(players, n_rounds)
+
+		# Initialize temp field and score arrays
 		self.field = np.zeros(field_size)
-		enumeration = enumerate(define_players(players))
-		self.players = {number: player for number, player in enumeration}
-		# Temporary evolutions value
-		self.evolutions = 1
 		self.score_array = np.zeros(field_size)
 
-		cube_shape = field_size + (2,)
+		# Define Players
+		enumeration = enumerate(define_players(players))
+		self.players = {number: player for number, player in enumeration}
+
+		# Set end conditions/flags & define rng seed
+		self.evolutions = evolutions
+		self.convergence = False
+		self.win_condition = win_condition
+
+		# Define variables for later use
+		self.rng = np.random.default_rng(rng_seed)
+		self.quantile = 0.2
+
+		# Initialize historical field and score cubes
+		cube_shape = (0,) + field_size
 		self.field_cube = np.empty(cube_shape)
 		self.score_cube = np.empty(cube_shape)
+
 
 	def spawn(self):
 		for ii in range(self.field.shape[0]):
@@ -89,7 +106,7 @@ class population_mode(dilemma_tournament):
 		"""
 		nn = self.n_rounds
 		if not nn: # Random number of rounds if not user defined
-			nn = round(self.rng.normal(50, 2)) # Normal ditribution mean=200, one_sigma=10
+			nn = round(self.rng.normal(50, 2)) # Normal ditribution mean=50, one_sigma=2
 		bot_1_history = []
 		bot_2_history = []
 
@@ -118,25 +135,39 @@ class population_mode(dilemma_tournament):
 		return self
 	
 	def respawn(self):
+
 		# Store current field state
-		np.concatenate((self.field_cube, 
-						np.expand_dims(self.field, axis=2)), 
-						axis=2) # Add array to cube
+		self.field_cube = np.concatenate((self.field_cube, 
+						np.expand_dims(self.field, axis=0)), 
+						axis=0) # Add array to cube
 
 		# Determine indicies to respawn
-		replace_n = (self.field.shape[0] * self.field.shape[1])//20
-		flat_indices = np.argsort(self.field.flatten())
-		true_indicies = np.unravel_index(flat_indices[:replace_n], self.field.shape)
+		cutoff_score = int(np.quantile(self.score_array[1:-1, 1:-1], self.quantile))
 
-		# Respawn those indicies
-		for ii in true_indicies[0]:
-			for nn in true_indicies[1]:
-				self.field[ii,nn] = self.rng.choice(list(self.players.keys()))
+		# Respawn lowest scorers
+		boolray = self.score_array <= cutoff_score
+		self.field[boolray] = self.rng.choice(list(self.players.keys()))
 
+		# Store score state
 		self.score_cube = np.concatenate((self.score_cube, 
-										  np.expand_dims(self.score_array, axis=2)), 
-										  axis=2) # Add array to cube
+										  np.expand_dims(self.score_array, axis=0)), 
+										  axis=0) # Add array to cube
 		self.score_array = np.zeros(self.field.shape) # Empty array
+		return self
+
+	def check_convergence(self):
+		std = np.std(self.score_array)
+		print(std)
+
+		if len(np.unique(self.field)) == 2:
+			self.convergence = True
+
+		dominator = np.quantile(self.field, 1)
+
+		if dominator == np.quantile(self.field, self.win_condition):
+			print(self.players[dominator].__name__, "has taken more than half the field")
+			self.convergence = True
+
 		return self
 
 	def generate_images(self):
@@ -145,14 +176,45 @@ class population_mode(dilemma_tournament):
 	
 		No Parameters.
 		"""
-		# Loop through the cube
-		for ii, state in enumerate(self.field_cube[2]):
 
-			# Open image,create folder for images, prepare filename
-			plt.imshow(state)
+		# Define custom colormap
+		possible_colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'orange', 'purple', 'pink', 'brown']
+		custom_colors = [possible_colors[ii] for ii in self.players.keys()]
+		cmap_custom = mcolors.ListedColormap(custom_colors)
+
+		# Loop through the cube
+		for ii, state in enumerate(self.field_cube):
+
+			# Normalize state value to make colors predictable
+			norm_state = state / np.max(state)
+
+			# Show and title image
+			plt.imshow(norm_state, cmap=cmap_custom)
+			plt.title(f"Evolution step:{ii:02d}")
+
+			unique_values = np.unique(state)
+			cbar = plt.colorbar()
+			cbar.set_ticks([key/len(self.players) for key in self.players.keys()])
+			cbar.set_ticklabels([function.__name__ for function in self.players.values()]) 
+
+			# # Make legend 
+			# unique_values = np.unique(state)
+			# legend_handles = []
+			# for value, function in [(key, self.players[key]) for key in unique_values]:
+			# 	# Create a patch with the same color as the value
+			# 	patch = plt.matplotlib.patches.Patch(
+			# 			color=plt.cm.viridis(value / np.max(state)), 
+			# 			label=function.__name__)
+			# 	legend_handles.append(patch)
+
+			# # Add legend to the plot
+			# plt.legend(handles=legend_handles, loc=1, 
+			#            fontsize="xx-small")
+
+			# Create a folder for the images, prepare the filename
 			output_dir = "./dilemma-fields"
 			os.makedirs(output_dir, exist_ok=True)
-			image_path = f"{output_dir}/evo{ii}.png"
+			image_path = f"{output_dir}/evo{ii:02d}.png"
 
 			output_dir = "./dilemma-fields"
 			os.makedirs(output_dir, exist_ok=True)
@@ -171,7 +233,7 @@ class population_mode(dilemma_tournament):
 			if filename.endswith('.png'):
 				file_path = os.path.join("./dilemma-fields", filename)
 				images.append(imageio.imread(file_path))
-		imageio.mimsave("dilema-field-evolution", images, duration=0.5)  # Adjust duration as needed
+		imageio.mimsave("dilemma-field-evolution.gif", images, duration=0.75)  # Adjust duration as needed
 
 		return self
 
@@ -185,8 +247,9 @@ class population_mode(dilemma_tournament):
 			Displays the field at every step.
 		"""
 		self.spawn()
-		while self.evolutions > 0:
+		while self.evolutions > 0 and not self.convergence:
 			self.round()
+			self.check_convergence()
 			self.respawn()
 			self.evolutions -= 1
 		return self
@@ -195,5 +258,11 @@ def population():
 	"""
 	Runs population simulation with built-in bots using command line
 	"""
+	# Possible arguments
+	# args = ["players", "n_rounds", "evolutions", "field_size", "rng_seed"]
+
+	# for arg in args:
+	# 	if arg in sys.argv
+
 	population_mode().run().generate_gif()
 	return 0

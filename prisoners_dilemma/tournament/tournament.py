@@ -92,7 +92,7 @@ class dilemma_tournament():
 			elif decision_2:
 				return (3, -1) # Defect/Cooperate
 
-		raise ValueError
+		raise ValueError("Players must return Boolean where True==Cooperate")
 
 
 	def matchup(self, bot_1, bot_2):
