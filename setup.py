@@ -5,7 +5,7 @@ with open("./README.md", "r", encoding="utf-8") as f:
 
 setuptools.setup(
      name="prisoners-dilemma",
-     version="1.0",
+     version="1.0.1",
      author="Keith Buckholz",
      author_email="keith.buckholz@yale.edu",
      description="Prisoner's Dilemma Simulation",
