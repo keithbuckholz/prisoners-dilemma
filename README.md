@@ -2,13 +2,40 @@
 
 # prisoners\_dilemma
 
+# Quick Start
+
+The Prisoner's Dilemma is a game between two players. The players may choose to "cooperate" or "defect." Both players cooperations grants both players 2 points. Both players defection grants no points. If one player defect while the other cooperates, the defector gets 3 points and the cooperator gets -1 points.
+
+This package can be used to run a simulation using the concept of the prisoner's dilemma.
+
+This package is designed to be accessed from the command line using one of 
+three commands:
+
+```
+dilemma-tournament
+dilemma-population
+dilemma-credits
+```
+
+dilemma-tournaments and -population have several additional arguments which can
+be given to modify the respective simulation. See their entries below for more 
+detail.
+
+dilemma-tournament will run a series of dilemmas to test every included decision making algorithm against every other included algorithm. 
+
+dilemma-population asigns "players" on a grid field decision-making algorithms. Then, it tests every player against their neighbors, identifies the lowest scorers, and asigns those lowest scorers a new decision-making algorithm. Thus, evolving the field until an end condition is met.
+
+dilemma-credits simply prints urls pointing to the inspritation for this package.
+
+If you want to include decision-making algorithms of your own, build python functions which take a single list of lists and return a boolean where True indicate cooperation. Place those python functions in one script and add "players=MYPLAYERS.py" to the end of your command line entry. The list of lists your bot must take in conatains data from your opponents previous decisions in the form: [[opponent_name(str), opponent_decision(bool), opponent_points(int)],[opponent_name(str), opponent_decision(bool), opponent_points(int)]...]. If you must remember your previous decisions, this can be determined using the opponents previous decision and matched point values.
+
 <a id="prisoners_dilemma.bots"></a>
 
-# prisoners\_dilemma.bots
+## prisoners\_dilemma.bots
 
 <a id="prisoners_dilemma.bots.bots"></a>
 
-# prisoners\_dilemma.bots.bots
+## prisoners\_dilemma.bots.bots
 
 <a id="prisoners_dilemma.bots.bots.tit_for_tat"></a>
 
@@ -117,11 +144,11 @@ cooperate more often if the opponent cooperates more often.
 
 <a id="prisoners_dilemma.tournament"></a>
 
-# prisoners\_dilemma.tournament
+## prisoners\_dilemma.tournament
 
 <a id="prisoners_dilemma.tournament.tournament"></a>
 
-# prisoners\_dilemma.tournament.tournament
+## prisoners\_dilemma.tournament.tournament
 
 <a id="prisoners_dilemma.tournament.tournament.import_user_bots"></a>
 
@@ -179,7 +206,7 @@ def credits()
 This method is accessible from command line and provides credit to the 
 inspiration for this python package.
 
-## dilemma\_tournament Objects
+### dilemma\_tournament Objects
 
 <a id="prisoners_dilemma.tournament.tournament.dilemma_tournament"></a>
 
@@ -283,11 +310,11 @@ end, the final score as well as a few benchmarks as printed.
 
 <a id="prisoners_dilemma.population"></a>
 
-# prisoners\_dilemma.population
+## prisoners\_dilemma.population
 
 <a id="prisoners_dilemma.population.population"></a>
 
-# prisoners\_dilemma.population.population
+## prisoners\_dilemma.population.population
 
 <a id="prisoners_dilemma.population.population.population_mode"></a>
 
@@ -303,7 +330,7 @@ Intended for command line usage. Parses sys.argv list into kwargs. Then,
 runs full population simulation and generates images and gif. For possible
 kwargs, see population_mode class and its run() method.
 
-## population\_mode Objects
+### population\_mode Objects
 
 ```python
 class population_mode(dilemma_tournament)
