@@ -1,10 +1,11 @@
 import sys
+import os
 import importlib
 import numpy as np
 from inspect import isfunction
 from prisoners_dilemma import bots
 
-def import_user_bots(filename):
+def import_user_bots(filepath):
 	"""
 	This function imports a users file full of player algorithms.
 
@@ -14,12 +15,16 @@ def import_user_bots(filename):
 		Name of the python script to be imported, not including .py extension.
 	"""
 	# If user attempting to skip import, do not import. Return 0
-	if filename==None or filename=="None":
+	if filepath==None or filepath=="None":
 		return 0
 
 	try:
 		# Try to import the package
-		module = importlib.import_module(filename)
+		path, file = os.path.split(filepath)
+		sys.path.append(path)
+		if file[-3:].lower() == '.py':
+			file = file[:-3]
+		module = importlib.import_module(file)
 		return module
 	
 	except ImportError as e:
@@ -276,8 +281,6 @@ def tournament():
 
 			# Parse player script
 			if key == "players":
-				if value[-3:].lower() == ".py":
-					value = value[:-3]
 				kwargs[key] = value
 			
 		except ValueError as e:
