@@ -1,9 +1,10 @@
 Metadata-Version: 2.1
 Name: prisoners-dilemma
-Version: 0.1
+Version: 1.0
 Summary: Prisoner's Dilemma Simulation
 Author: Keith Buckholz
 Author-email: keith.buckholz@yale.edu
 Requires-Python: >=3
 Requires-Dist: numpy
 Requires-Dist: matplotlib
+Requires-Dist: imageio

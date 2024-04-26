@@ -1,3 +1,4 @@
+README.md
 setup.py
 prisoners_dilemma/__init__.py
 prisoners_dilemma.egg-info/PKG-INFO
