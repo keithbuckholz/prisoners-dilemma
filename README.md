@@ -2,6 +2,10 @@
 
 # prisoners\_dilemma
 
+<a id="prisoners_dilemma.bots"></a>
+
+# prisoners\_dilemma.bots
+
 <a id="prisoners_dilemma.bots.bots"></a>
 
 # prisoners\_dilemma.bots.bots
@@ -111,10 +115,6 @@ cooperate more often if the opponent cooperates more often.
     opponent_moves: nested list structure
         Player algorithm.
 
-<a id="prisoners_dilemma.bots"></a>
-
-# prisoners\_dilemma.bots
-
 <a id="prisoners_dilemma.tournament"></a>
 
 # prisoners\_dilemma.tournament
@@ -155,9 +155,33 @@ by the user.
         Name of python script defining player functions, not including .py
         extesion.
 
-<a id="prisoners_dilemma.tournament.tournament.dilemma_tournament"></a>
+<a id="prisoners_dilemma.tournament.tournament.tournament"></a>
+
+#### tournament
+
+```python
+def tournament()
+```
+
+Intended for command line usage. Parses sys.argv list into kwargs. Then,
+runs full tournament simulation and print results and benchmarks in
+command line. For possible kwargs, see dilemma_tournament class and its 
+tournament() method.
+
+<a id="prisoners_dilemma.tournament.tournament.credits"></a>
+
+#### credits
+
+```python
+def credits()
+```
+
+This method is accessible from command line and provides credit to the 
+inspiration for this python package.
 
 ## dilemma\_tournament Objects
+
+<a id="prisoners_dilemma.tournament.tournament.dilemma_tournament"></a>
 
 ```python
 class dilemma_tournament()
@@ -256,35 +280,28 @@ end, the final score as well as a few benchmarks as printed.
     Returns final scores instead of self. Note: if True, does not
     return self and other methods cannot be chained. default: False
 
-<a id="prisoners_dilemma.tournament.tournament.tournament"></a>
 
-#### tournament
+<a id="prisoners_dilemma.population"></a>
 
-```python
-def tournament()
-```
-
-Intended for command line usage. Parses sys.argv list into kwargs. Then,
-runs full tournament simulation and print results and benchmarks in
-command line. For possible kwargs, see dilemma_tournament class and its 
-tournament() method.
-
-<a id="prisoners_dilemma.tournament.tournament.credits"></a>
-
-#### credits
-
-```python
-def credits()
-```
-
-This method is accessible from command line and provides credit to the 
-inspiration for this python package.
+# prisoners\_dilemma.population
 
 <a id="prisoners_dilemma.population.population"></a>
 
 # prisoners\_dilemma.population.population
 
 <a id="prisoners_dilemma.population.population.population_mode"></a>
+
+<a id="prisoners_dilemma.population.population.population"></a>
+
+#### population
+
+```python
+def population()
+```
+
+Intended for command line usage. Parses sys.argv list into kwargs. Then,
+runs full population simulation and generates images and gif. For possible
+kwargs, see population_mode class and its run() method.
 
 ## population\_mode Objects
 
@@ -465,19 +482,9 @@ or gifs on its own. That method must be called afterwards.
     return self and other methods cannot be chained.
     default: False
 
-<a id="prisoners_dilemma.population.population.population"></a>
 
-#### population
 
-```python
-def population()
-```
 
-Intended for command line usage. Parses sys.argv list into kwargs. Then,
-runs full population simulation and generates images and gif. For possible
-kwargs, see population_mode class and its run() method.
 
-<a id="prisoners_dilemma.population"></a>
 
-# prisoners\_dilemma.population
 
