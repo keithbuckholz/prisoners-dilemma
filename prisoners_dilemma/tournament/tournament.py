@@ -1,13 +1,3 @@
-"""
-Inspiration: https://www.youtube.com/watch?v=mScpHTIi-kM
-This has already been done: https://ncase.me/trust/
-
-This script runs a prisoner's dilemma simulation with mutliple participants 
-over an unknown number of rounds.
-
-All player algorithms must be functions stored in a file name bots.py, which will be imported to run the simulation.
-"""
-
 import sys
 import importlib
 import numpy as np
@@ -17,6 +7,11 @@ from prisoners_dilemma import bots
 def import_user_bots(filename):
 	"""
 	This function imports a users file full of player algorithms.
+
+	Parameters
+	----------
+	filename: str
+		Name of the python script to be imported, not including .py extension.
 	"""
 	# If user attempting to skip import, do not import. Return 0
 	if filename==None or filename=="None":
@@ -33,7 +28,14 @@ def import_user_bots(filename):
 
 def define_players(players):
 	"""
-	Defines list_of_players using built-in bots, plus any algorithms provided by the user.
+	Defines list_of_players using built-in bots, plus any algorithms provided
+	by the user.
+
+	Parameters
+	----------
+	players: str
+		Name of python script defining player functions, not including .py
+		extesion.
 	"""
 	# Import built-ins
 	list_of_players = [getattr(bots, item) for item in dir(bots) 
@@ -58,9 +60,27 @@ class dilemma_tournament():
 	defect while the other cooperates, the defector gets 3 points and the 
 	cooperator gets -1 points.
 
-	This class runs a tournament of prisoner's dilemmas. It calls the 
-	Define_players function to define the player algorithms. Then tests
-	each algorithm against every other algorithm and prints the final results.
+	This class runs a series of prisoner's dilemmas. It defines all player 
+	algorithms using built-in bots from the prisoners-dilemma/bots package
+	and using functions in a user-defined python script. It contains methods
+	used to award points for decisions, test two player algorithms against each
+	other and test all player algorithms against all other player algorithms.
+	
+	Parameters
+	----------
+	players: str, optional
+		Name of .py script containing algorithms the user wants included. Note:
+		algorithms must take in 1 argument that is nested lists containing 
+		opponent information. Player algorithms must return a bool for which 
+		True indicates Cooperation.
+	n_rounds: int, optional
+		Number of rounds played between each player algorithm. By default, the
+		number of rounds played are randomly selected from a gaussian with a
+		mean of 200 and standard deviation of 10
+	rng_seed: int, optional
+		rng seed can be given for replicability. Note: this seed in not passed
+		to player algorithms. Player algorithm behavior may prevent perfect
+		replication. default: None
 	"""
 	
 	def __init__(self, players=None, n_rounds=None, rng_seed=None):
@@ -80,14 +100,14 @@ class dilemma_tournament():
 	def award_points(self, decision_1, decision_2):
 		"""
 		Awards points for decisions on a single prisoner's dilemma. Decisions
-		will be evaluated as booleans where True is Cooperation.
+		will be evaluated as booleans where True indicates Cooperation.
 
 		Parameters
 		----------
 		decision_1: bool
-			The player's decisions. Will be evaluated as booleans where True is Cooperation.
+			The first player's decisions.
 		decision_2: bool
-			The player's decisions. Will be evaluated as booleans where True is Cooperation.
+			The second player's decisions.
 		"""
 
 		# Check decisions and award points
@@ -108,9 +128,10 @@ class dilemma_tournament():
 
 	def matchup(self, bot_1, bot_2):
 		"""
-		This method runs n rounds of the prisoners dilemma by calling the award_points method n times.
-		This method records all match information to all_results instance attribute, and awards points
-		to the final_score instance attribute.
+		This method runs some number of rounds of the prisoners dilemma by 
+		calling the award_points method n times. This method records all match 
+		information to all_results instance attribute, and awards points to the
+		final_score instance attribute.
 
 		Parameters
 		----------
@@ -123,21 +144,22 @@ class dilemma_tournament():
 		# Initialize Matchup
 		nn = self.n_rounds
 		if not nn: # Random number of rounds if not user defined
-			nn = round(self.rng.normal(200, 10)) # Normal ditribution mean=200, one_sigma=10
+			nn = round(self.rng.normal(200, 10)) # Normal ditribution mean=200,
+			                                     # one_sigma=10
 		bot_1_history = []
 		bot_2_history = []
 
-		# Run game repeatedly
+		# Run game nn times
 		for ii in range(nn):
 
 			# Collect bot decisions
 			decision_1 = bot_1(bot_2_history)
 			decision_2 = bot_2(bot_1_history)
 
-			# Run dilemma, store score_tuple
+			# Run dilemma once, store score_tuple
 			score_tuple = self.award_points(decision_1, decision_2)
 
-			# Unpack score_tuple and update scores
+			# Unpack score_tuple and update final scores
 			self.final_scores[bot_1.__name__] += score_tuple[0]
 			self.final_scores[bot_2.__name__] += score_tuple[1]
 
@@ -150,27 +172,37 @@ class dilemma_tournament():
 			bot_2_history.append(round_info[1])
 
 		# Update object history with this rounds information
-		self.all_results.append([bot_1_history, bot_2_history]) # Record all matchup info
+		self.all_results.append([bot_1_history, bot_2_history])
 
 		return self
 
-	def tournament(self, show_scores=True, return_all_results=False, return_scores=False):
+	def tournament(self, show_scores=True, return_all_results=False, 
+				   return_scores=False):
 		"""
-		This method runs a tournament, testing all players against all other players.
+		This method tests every player algorithm against each other. Each
+		player algorithm will play one "match" with each other player algorithm
+		once. A "match" is defined as some number of consecutive rounds. At the
+		end, the final score as well as a few benchmarks as printed.
 
 		Parameters
 		----------
-		show_scores: bool, False
-			Prints the final scores
-		show_match_info: bool
-			Prints all matches' information.
+		show_scores: bool
+			Prints the final score after tournament is run. default: True
+		return_all_results: bool
+			Returns results of every single dilemma instead of self. Note: if 
+			True, does not return self and other methods cannot be chained. 
+			default: False
+		return_scores: bool
+			Returns final scores instead of self. Note: if True, does not 
+			return self and other methods cannot be chained. default: False
 		"""
 
-		# Loops through bots
+		# Loops through bots, testing against all other bots
 		for ii, bot_1 in enumerate(self.players):
 			for bot_2 in self.players[ii+1:]:
 				self.all_results.append(self.matchup(bot_1, bot_2))
 
+		# Calculate Benchmark scores
 		if not self.n_rounds:
 			n_rounds = 200
 		else:
@@ -186,6 +218,7 @@ class dilemma_tournament():
 		f"Approximate Minimum Points: {min_points} \n"
 		f"Perfect Cooperation: {perf_coop} \n")
 
+		# Show scores and return
 		if show_scores:
 			print("\n" + benchmarks)
 			for bot, score in self.final_scores.items():
@@ -202,9 +235,11 @@ class dilemma_tournament():
 # Code allowing command line usage is below this comment
 def tournament():
 	"""
-	Runs tournament with built-in bots in the command line
+	Intended for command line usage. Parses sys.argv list into kwargs. Then,
+	runs full tournament simulation and print results and benchmarks in
+	command line. For possible kwargs, see dilemma_tournament class and its 
+	tournament() method.
 	"""
-
 	# Possible arguments
 	possible_args = ["players", "n_rounds", "rng_seed"]
 	tourni_args = ["show_scores", "return_scores", "return_all_results"]
@@ -218,7 +253,8 @@ def tournament():
 		try:
 			key, value = argv.split('=')
 		except ValueError as e:
-			message = f"{argv} is not valid. Arguments must be 'argument=value' with no whitespace."
+			message = (f"{argv} is not valid. Arguments must be "
+			            "'argument=value' with no whitespace.")
 			raise e from ValueError(message)
 
 		# Handle Tournament kwargs
@@ -229,7 +265,8 @@ def tournament():
 			continue
 
 		# Check that kwargs are valid
-		assert key in possible_args, f"{key} is not a valid kwarg. kwargs must be one of:{possible_args}"
+		assert key in possible_args, (f"{key} is not a valid kwarg. kwargs must "
+		                               "be one of:{possible_args}")
 
 		try:
 
@@ -244,7 +281,6 @@ def tournament():
 				kwargs[key] = value
 			
 		except ValueError as e:
-			# Message written here for formatting and terminal readability
 			message = (f"Invalid value for {key}={value}. "
 						"this kwarg must be an integers.")
 			raise e from ValueError(message)
@@ -254,6 +290,10 @@ def tournament():
 
 
 def credits():
+	"""
+	This method is accessible from command line and provides credit to the 
+	inspiration for this python package.
+	"""
 	print("""
 	Inspiration: https://www.youtube.com/watch?v=mScpHTIi-kM
 	This has already been done: https://ncase.me/trust/

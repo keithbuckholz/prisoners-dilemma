@@ -8,11 +8,43 @@ import imageio
 
 class population_mode(dilemma_tournament):
 	"""
-	This class places player algorithms on a map. Each round tests each 
-	algorithm against only it's neighbors N times. Then, the worst performing
-	fifth of the population randomly changes strategies. After some number of
-	rounds or when the top four-fifths of the population is the same algorithm,
-	the simulation ends.
+	This class places players on a map with certain decision making algorithms. 
+	Each round tests each player against only it's neighbors some number of 
+	times. Then, the worst performers of the population randomly change 
+	strategies/decision-making-algorithms. After some number of rounds or when
+	a predetermined amount of the population is using the same algorithm, the 
+	simulation ends. After the simulation ends, the results are made into 
+	images and those images are turned into a gif all in a folder named 
+	dilemma-fields.
+
+	Parameters
+	----------
+	players: str, optional
+		Name of .py script containing algorithms the user wants included. Note:
+		algorithms must take in 1 argument that is nested lists containing 
+		opponent information. Player algorithms must return a bool for which 
+		True indicates Cooperation.
+	n_rounds: int, optional
+		Number of rounds played between each player algorithm. By default, the
+		number of rounds played are randomly selected from a gaussian with a
+		mean of 50 and standard deviation of 2
+	evolutions: int, optional
+		Maximum number of field evolutions before simulation stops. In case of
+		oscilation, this will prevent the sim from continuing indefinitely.
+		default: 100
+	field_size: tuple of 2 ints, optional
+		This determines the size of the field. default: (10, 10)
+	rng_seed: int, optional
+		rng seed can be given for replicability. Note: this seed in not passed
+		to player algorithms. Player algorithm behavior may prevent perfect
+		replication. default: None
+	quantile: float between 0 and 1, optional
+		How much of the map should be replaced each round. 0 would replace
+		nobody, 0.01 would replace the lowest 1%, and 1 would replace
+		everybody. default: 0.2
+	win_condition: float between 0 and 1, optional
+		How much of the map must be taken before declaring a victor. 
+		default: 0.5
 	"""
 
 	def __init__(self, players=None, n_rounds=None, evolutions=100,
@@ -44,6 +76,11 @@ class population_mode(dilemma_tournament):
 
 
 	def spawn(self):
+		"""
+		This method intially populated the field. Every player/point is
+		assigned a random algorithm such that the field is filled and 
+		randomized to start.
+		"""
 		for ii in range(self.field.shape[0]):
 			for nn in range(self.field.shape[1]):
 				self.field[ii,nn] = self.rng.choice(list(self.players.keys()))
@@ -51,7 +88,13 @@ class population_mode(dilemma_tournament):
 
 	def round(self):
 		"""
-		Runs a single round 
+		Runs a single round. Iterates through every player on the field from 
+		right to left, top to bottom. Tests every player-algorithm against all
+		neighbors below and to their immediate right. This ensure all player-
+		algorithms are only tested against each neighbor once. After finishing
+		a point's interation, that point's score is normalized to the number of
+		neighbors it has. This prevents the edge and corner positions from
+		unfair disadvantage.
 		"""
 		for ii in range(self.field.shape[0]):
 			for nn in range(self.field.shape[1]):
@@ -93,9 +136,11 @@ class population_mode(dilemma_tournament):
 
 	def matchup(self, bot_1, bot_2, bot_1_loc, bot_2_loc):
 		"""
-		This method runs n rounds of the prisoners dilemma by calling the award_points method n times.
-		This method records all match information to all_results instance attribute, and awards points
-		to the final_score instance attribute.
+		This method runs some number of rounds of the prisoners dilemma by 
+		gathering each players deicision to cooperate of defect then calling 
+		the award_points method (inherited from the tournament class) n times.
+		This method records all match information to the score_array instance 
+		attribute.
 
 		Parameters
 		----------
@@ -103,6 +148,10 @@ class population_mode(dilemma_tournament):
 			Player algorithm.
 		bot_2: function
 			Player algorithm.
+		bot_1_loc: tuple
+			tuple indexing bot_1's position on the field
+		bot_2_loc: tuple
+			tuple indexing bot_2's position on the field
 		"""
 		nn = self.n_rounds
 		if not nn: # Random number of rounds if not user defined
@@ -135,6 +184,17 @@ class population_mode(dilemma_tournament):
 		return self
 	
 	def respawn(self):
+		"""
+		This method changes those lowest scoring players on the field to a
+		random new algorithm. It sets a cutoff score at the given quantile.
+		Then replaces all players scoring below that mark. All changed players
+		will change to the same new algorithm.
+
+		While changing players' algorithms, this method stores the current
+		score and field state in the score cube and field cube respectivelly.
+		Lastly, this method clears the score_array.
+
+		"""
 
 		# Store current field state
 		self.field_cube = np.concatenate((self.field_cube, 
@@ -156,6 +216,10 @@ class population_mode(dilemma_tournament):
 		return self
 
 	def check_convergence(self):
+		"""
+		This method checks if the win_condition had been met by any algorithm.
+		If it has, this method set the convergence flag to True.
+		"""
 
 		if len(np.unique(self.field)) == 2:
 			self.convergence = True
@@ -170,9 +234,11 @@ class population_mode(dilemma_tournament):
 
 	def generate_images(self):
 		"""
-		This method displays the current population field. 
-	
-		No Parameters.
+		At the end of the simulation, this method iterates throught the field
+		cube and turns every field state into a unique image titled with which
+		step in the evolution is depicted and a colorbar to indicated which
+		algorithms are being shown. Images are saved in a folder named
+		dilemma-fields, overwriting and images previously saved in the folder.
 		"""
 
 		# Define custom colormap
@@ -199,6 +265,7 @@ class population_mode(dilemma_tournament):
 			# Create a folder for the images, prepare the filename
 			output_dir = "./dilemma-fields"
 			os.makedirs(output_dir, exist_ok=True)
+			
 			image_path = f"{output_dir}/evo{ii:02d}.png"
 
 			output_dir = "./dilemma-fields"
@@ -210,6 +277,13 @@ class population_mode(dilemma_tournament):
 		return self
 
 	def generate_gif(self):
+		"""
+		Calls the generate_images method to produce .png images from every
+		field state. Then, this method turns those .png images into a gif to
+		make trends and emergent behaviors more clear. gif is save in a folder
+		name dilemma-fields with the images. Overwrites any previously saved
+		gif in the folder. Filename: dilemma-field-evolution.gif
+		"""
 
 		self.generate_images()
 
@@ -218,18 +292,29 @@ class population_mode(dilemma_tournament):
 			if filename.endswith('.png'):
 				file_path = os.path.join("./dilemma-fields", filename)
 				images.append(imageio.imread(file_path))
-		imageio.mimsave("dilemma-field-evolution.gif", images, duration=0.75)  # Adjust duration as needed
+		imageio.mimsave("dilemma-fields/dilemma-field-evolution.gif", images, duration=0.75)  # Adjust duration as needed
 
 		return self
 
 	def run(self, return_field_cube=False, return_score_cube=False):
 		"""
-		This method runs the population simulation to it's conclusion.
+		This method runs the population simulation to it's conclusion. This
+		conclustion is either after so many evolutions or after a convergence
+		occurs and a winner is declared. This method does not generate images
+		or gifs on its own. That method must be called afterwards.
 
 		Parameters
 		----------
-		show_steps: bool
-			Displays the field at every step.
+		return_field_cube: bool, optional
+			Returns cube containing every field state instead of self. If 
+			return_score_cube is also True, both are returned. Note: does not 
+			return self and other methods cannot be chained. 
+			default: False
+		return_score_cube: bool, optional
+			Returns cube containing all score arrays instead of self. If 
+			return_field_cube is also True, both are returned. Note: does not 
+			return self and other methods cannot be chained. 
+			default: False 
 		"""
 		self.spawn()
 		while self.evolutions > 0 and not self.convergence:
@@ -240,13 +325,17 @@ class population_mode(dilemma_tournament):
 
 		if return_field_cube and return_score_cube:
 			return self.field_cube, self.score_cube
+		if return_field_cube:
+			return self.field_cube
+		if return_score_cube:
+			return self.score_cube
 		return self
 
 def population():
 	"""
-	Runs population simulation with built-in bots using command line. 
-	The second argument must be .py script with other players/algorithms, or
-	None if no such script is to be included. 
+	Intended for command line usage. Parses sys.argv list into kwargs. Then,
+	runs full population simulation and generates images and gif. For possible
+	kwargs, see population_mode class and its run() method.
 	"""
 	# Possible arguments
 	possible_args = ["players", "n_rounds", "evolutions", "field_size",
@@ -306,6 +395,8 @@ def population():
 						"this kwarg must be an integers.")
 			raise e from ValueError(message)
 
-
-	population_mode(**kwargs).run(**pwargs).generate_gif()
+	if pwargs:
+		population_mode(**kwargs).run(**pwargs)
+	else:
+		population_mode(**kwargs).run().generate_gif()
 	return 0
