@@ -20,9 +20,7 @@ dilemma-credits
 dilemma-tournaments and -population have several additional arguments which can be given to modify the respective simulation. For more details on possible arguments see the following entries:
 
 <a id="prisoners_dilemma.tournament.tournament.tournament"></a>prisoners-dilemma.tournament.tournament.tournament
-
 <a id="prisoners_dilemma.population.population.population"></a>prisoner-dilemma.population.population.population
-
 
 dilemma-tournament will run a series of dilemmas to test every included decision making algorithm against every other included algorithm. 
 
@@ -30,7 +28,11 @@ dilemma-population asigns "players" on a grid field decision-making algorithms. 
 
 dilemma-credits simply prints urls pointing to the inspritation for this package.
 
-If you want to include decision-making algorithms of your own, build python functions which take a single list of lists and return a boolean where True indicate cooperation. Place those python functions in one script and add "players=MYPLAYERS.py" to the end of your command line entry. The list of lists your bot must take in conatains data from your opponents previous decisions in the form: [[opponent_name(str), opponent_decision(bool), opponent_points(int)],[opponent_name(str), opponent_decision(bool), opponent_points(int)]...]. If you must remember your previous decisions, this can be determined using the opponents previous decision and matched point values.
+If you want to include decision-making algorithms of your own, build python functions which take a single list of lists and return a boolean where True indicate cooperation. Place those python functions in one script and add "players=MYPLAYERS.py" to the end of your command line entry. The list of lists your bot must take in conatains data from your opponents previous decisions in the form:
+
+[[opponent_name(str), opponent_decision(bool), opponent_points(int)],[opponent_name(str), opponent_decision(bool), opponent_points(int)]...]
+
+If you must remember your previous decisions, this can be determined using the opponents previous decision and matched point values.
 
 <a id="prisoners_dilemma.bots"></a>
 
