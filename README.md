@@ -31,10 +31,10 @@ def always_defect(opponent_moves)
 
 Player always defects.
 
-Parameters
-----------
-opponent_moves: nested list structure
-	Player algorithm.
+    Parameters
+    ----------
+    opponent_moves: nested list structure
+        Player algorithm.
 
 <a id="prisoners_dilemma.bots.bots.always_cooperate"></a>
 
@@ -44,12 +44,12 @@ opponent_moves: nested list structure
 def always_cooperate(opponent_moves)
 ```
 
-Player always cooperates.
+    Player always cooperates.
 
-Parameters
-----------
-opponent_moves: nested list structure
-	Player algorithm.
+    Parameters
+    ----------
+    opponent_moves: nested list structure
+        Player algorithm.
 
 <a id="prisoners_dilemma.bots.bots.tester"></a>
 
@@ -63,10 +63,10 @@ Player first plays defect. If the opponent plays cooperate, tester will
 apologize by playing cooperate twice. After apologizing, or if the opponent
 opens with defect, tester will play tit-for-tat.
 
-Parameters
-----------
-opponent_moves: nested list structure
-	Player algorithm.
+    Parameters
+    ----------
+    opponent_moves: nested list structure
+        Player algorithm.
 
 <a id="prisoners_dilemma.bots.bots.grudge"></a>
 
@@ -79,10 +79,10 @@ def grudge(opponent_moves)
 Player cooperates until the opponent defects. Once the opponent defects,
 player always defect.
 
-Parameters
-----------
-opponent_moves: nested list structure
-	Player algorithm.
+    Parameters
+    ----------
+    opponent_moves: nested list structure
+        Player algorithm.
 
 <a id="prisoners_dilemma.bots.bots.random"></a>
 
@@ -106,10 +106,10 @@ Player first plays cooperate. Then, makes a semi-random choice to defect
 or cooperate weighted by the number of opponent cooperations. Will
 cooperate more often if the opponent cooperates more often.
 
-Parameters
-----------
-opponent_moves: nested list structure
-	Player algorithm.
+    Parameters
+    ----------
+    opponent_moves: nested list structure
+        Player algorithm.
 
 <a id="prisoners_dilemma.bots"></a>
 
@@ -133,10 +133,10 @@ def import_user_bots(filename)
 
 This function imports a users file full of player algorithms.
 
-Parameters
-----------
-filename: str
-	Name of the python script to be imported, not including .py extension.
+    Parameters
+    ----------
+    filename: str
+        Name of the python script to be imported, not including .py extension.
 
 <a id="prisoners_dilemma.tournament.tournament.define_players"></a>
 
@@ -149,11 +149,11 @@ def define_players(players)
 Defines list_of_players using built-in bots, plus any algorithms provided
 by the user.
 
-Parameters
-----------
-players: str
-	Name of python script defining player functions, not including .py
-	extesion.
+    Parameters
+    ----------
+    players: str
+        Name of python script defining player functions, not including .py
+        extesion.
 
 <a id="prisoners_dilemma.tournament.tournament.dilemma_tournament"></a>
 
@@ -175,21 +175,21 @@ and using functions in a user-defined python script. It contains methods
 used to award points for decisions, test two player algorithms against each
 other and test all player algorithms against all other player algorithms.
 
-Parameters
-----------
-players: str, optional
-Name of .py script containing algorithms the user wants included. Note:
-algorithms must take in 1 argument that is nested lists containing
-opponent information. Player algorithms must return a bool for which
-True indicates Cooperation.
-n_rounds: int, optional
-Number of rounds played between each player algorithm. By default, the
-number of rounds played are randomly selected from a gaussian with a
-mean of 200 and standard deviation of 10
-rng_seed: int, optional
-rng seed can be given for replicability. Note: this seed in not passed
-to player algorithms. Player algorithm behavior may prevent perfect
-replication. default: None
+    Parameters
+    ----------
+    players: str, optional
+    Name of .py script containing algorithms the user wants included. Note:
+    algorithms must take in 1 argument that is nested lists containing
+    opponent information. Player algorithms must return a bool for which
+    True indicates Cooperation.
+    n_rounds: int, optional
+    Number of rounds played between each player algorithm. By default, the
+    number of rounds played are randomly selected from a gaussian with a
+    mean of 200 and standard deviation of 10
+    rng_seed: int, optional
+    rng seed can be given for replicability. Note: this seed in not passed
+    to player algorithms. Player algorithm behavior may prevent perfect
+    replication. default: None
 
 <a id="prisoners_dilemma.tournament.tournament.dilemma_tournament.award_points"></a>
 
@@ -202,12 +202,12 @@ def award_points(decision_1, decision_2)
 Awards points for decisions on a single prisoner's dilemma. Decisions
 will be evaluated as booleans where True indicates Cooperation.
 
-Parameters
-----------
-decision_1: bool
-	The first player's decisions.
-decision_2: bool
-	The second player's decisions.
+    Parameters
+    ----------
+    decision_1: bool
+        The first player's decisions.
+    decision_2: bool
+        The second player's decisions.
 
 <a id="prisoners_dilemma.tournament.tournament.dilemma_tournament.matchup"></a>
 
@@ -222,12 +222,12 @@ calling the award_points method n times. This method records all match
 information to all_results instance attribute, and awards points to the
 final_score instance attribute.
 
-Parameters
-----------
-bot_1: function
-	Player algorithm.
-bot_2: function
-	Player algorithm.
+    Parameters
+    ----------
+    bot_1: function
+        Player algorithm.
+    bot_2: function
+        Player algorithm.
 
 <a id="prisoners_dilemma.tournament.tournament.dilemma_tournament.tournament"></a>
 
@@ -244,17 +244,17 @@ player algorithm will play one "match" with each other player algorithm
 once. A "match" is defined as some number of consecutive rounds. At the
 end, the final score as well as a few benchmarks as printed.
 
-Parameters
-----------
-show_scores: bool
-Prints the final score after tournament is run. default: True
-return_all_results: bool
-Returns results of every single dilemma instead of self. Note: if
-True, does not return self and other methods cannot be chained.
-default: False
-return_scores: bool
-Returns final scores instead of self. Note: if True, does not
-return self and other methods cannot be chained. default: False
+    Parameters
+    ----------
+    show_scores: bool
+    Prints the final score after tournament is run. default: True
+    return_all_results: bool
+    Returns results of every single dilemma instead of self. Note: if
+    True, does not return self and other methods cannot be chained.
+    default: False
+    return_scores: bool
+    Returns final scores instead of self. Note: if True, does not
+    return self and other methods cannot be chained. default: False
 
 <a id="prisoners_dilemma.tournament.tournament.tournament"></a>
 
@@ -301,34 +301,34 @@ simulation ends. After the simulation ends, the results are made into
 images and those images are turned into a gif all in a folder named
 dilemma-fields.
 
-Parameters
-----------
-players: str, optional
-Name of .py script containing algorithms the user wants included. Note:
-algorithms must take in 1 argument that is nested lists containing
-opponent information. Player algorithms must return a bool for which
-True indicates Cooperation.
-n_rounds: int, optional
-Number of rounds played between each player algorithm. By default, the
-number of rounds played are randomly selected from a gaussian with a
-mean of 50 and standard deviation of 2
-evolutions: int, optional
-Maximum number of field evolutions before simulation stops. In case of
-oscilation, this will prevent the sim from continuing indefinitely.
-default: 100
-field_size: tuple of 2 ints, optional
-This determines the size of the field. default: (10, 10)
-rng_seed: int, optional
-rng seed can be given for replicability. Note: this seed in not passed
-to player algorithms. Player algorithm behavior may prevent perfect
-replication. default: None
-quantile: float between 0 and 1, optional
-How much of the map should be replaced each round. 0 would replace
-nobody, 0.01 would replace the lowest 1%, and 1 would replace
-everybody. default: 0.2
-win_condition: float between 0 and 1, optional
-How much of the map must be taken before declaring a victor.
-default: 0.5
+    Parameters
+    ----------
+    players: str, optional
+    Name of .py script containing algorithms the user wants included. Note:
+    algorithms must take in 1 argument that is nested lists containing
+    opponent information. Player algorithms must return a bool for which
+    True indicates Cooperation.
+    n_rounds: int, optional
+    Number of rounds played between each player algorithm. By default, the
+    number of rounds played are randomly selected from a gaussian with a
+    mean of 50 and standard deviation of 2
+    evolutions: int, optional
+    Maximum number of field evolutions before simulation stops. In case of
+    oscilation, this will prevent the sim from continuing indefinitely.
+    default: 100
+    field_size: tuple of 2 ints, optional
+    This determines the size of the field. default: (10, 10)
+    rng_seed: int, optional
+    rng seed can be given for replicability. Note: this seed in not passed
+    to player algorithms. Player algorithm behavior may prevent perfect
+    replication. default: None
+    quantile: float between 0 and 1, optional
+    How much of the map should be replaced each round. 0 would replace
+    nobody, 0.01 would replace the lowest 1%, and 1 would replace
+    everybody. default: 0.2
+    win_condition: float between 0 and 1, optional
+    How much of the map must be taken before declaring a victor.
+    default: 0.5
 
 <a id="prisoners_dilemma.population.population.population_mode.spawn"></a>
 
@@ -372,16 +372,16 @@ the award_points method (inherited from the tournament class) n times.
 This method records all match information to the score_array instance 
 attribute.
 
-Parameters
-----------
-bot_1: function
-	Player algorithm.
-bot_2: function
-	Player algorithm.
-bot_1_loc: tuple
-	tuple indexing bot_1's position on the field
-bot_2_loc: tuple
-	tuple indexing bot_2's position on the field
+    Parameters
+    ----------
+    bot_1: function
+        Player algorithm.
+    bot_2: function
+        Player algorithm.
+    bot_1_loc: tuple
+        tuple indexing bot_1's position on the field
+    bot_2_loc: tuple
+        tuple indexing bot_2's position on the field
 
 <a id="prisoners_dilemma.population.population.population_mode.respawn"></a>
 
@@ -452,18 +452,18 @@ conclustion is either after so many evolutions or after a convergence
 occurs and a winner is declared. This method does not generate images
 or gifs on its own. That method must be called afterwards.
 
-Parameters
-----------
-return_field_cube: bool, optional
-Returns cube containing every field state instead of self. If
-return_score_cube is also True, both are returned. Note: does not
-return self and other methods cannot be chained.
-default: False
-return_score_cube: bool, optional
-Returns cube containing all score arrays instead of self. If
-return_field_cube is also True, both are returned. Note: does not
-return self and other methods cannot be chained.
-default: False
+    Parameters
+    ----------
+    return_field_cube: bool, optional
+    Returns cube containing every field state instead of self. If
+    return_score_cube is also True, both are returned. Note: does not
+    return self and other methods cannot be chained.
+    default: False
+    return_score_cube: bool, optional
+    Returns cube containing all score arrays instead of self. If
+    return_field_cube is also True, both are returned. Note: does not
+    return self and other methods cannot be chained.
+    default: False
 
 <a id="prisoners_dilemma.population.population.population"></a>
 
