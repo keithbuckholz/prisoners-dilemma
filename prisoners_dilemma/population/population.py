@@ -18,7 +18,7 @@ class population_mode(dilemma_tournament):
 	def __init__(self, players=None, n_rounds=None, evolutions=100,
 	             field_size=(10, 10), rng_seed=None, quantile=0.2,
 				 win_condition=0.5):
-		super().__init__(players, n_rounds)
+		super().__init__(players, n_rounds, rng_seed)
 
 		# Initialize temp field and score arrays
 		self.field = np.zeros(field_size)
@@ -156,8 +156,6 @@ class population_mode(dilemma_tournament):
 		return self
 
 	def check_convergence(self):
-		std = np.std(self.score_array)
-		print(std)
 
 		if len(np.unique(self.field)) == 2:
 			self.convergence = True
@@ -165,7 +163,7 @@ class population_mode(dilemma_tournament):
 		dominator = np.quantile(self.field, 1)
 
 		if dominator == np.quantile(self.field, self.win_condition):
-			print(self.players[dominator].__name__, "has taken more than half the field")
+			print(self.players[dominator].__name__, "has met the win condition.")
 			self.convergence = True
 
 		return self
@@ -224,7 +222,7 @@ class population_mode(dilemma_tournament):
 
 		return self
 
-	def run(self):
+	def run(self, return_field_cube=False, return_score_cube=False):
 		"""
 		This method runs the population simulation to it's conclusion.
 
@@ -239,17 +237,75 @@ class population_mode(dilemma_tournament):
 			self.check_convergence()
 			self.respawn()
 			self.evolutions -= 1
+
+		if return_field_cube and return_score_cube:
+			return self.field_cube, self.score_cube
 		return self
 
 def population():
 	"""
-	Runs population simulation with built-in bots using command line
+	Runs population simulation with built-in bots using command line. 
+	The second argument must be .py script with other players/algorithms, or
+	None if no such script is to be included. 
 	"""
 	# Possible arguments
-	# args = ["players", "n_rounds", "evolutions", "field_size", "rng_seed"]
+	possible_args = ["players", "n_rounds", "evolutions", "field_size",
+					 "rng_seed", "quantile", "win_condition"]
+	int_args = ["n_rounds", "evolutions", "rng_seed"]
+	float_args = ["quantile", "win_condition"]
+	pop_args = ["show_scores", "return_scores", "return_all_results"]
+	given_args = sys.argv[1:]
 
-	# for arg in args:
-	# 	if arg in sys.argv
+	kwargs = {}
+	pwargs = {}
 
-	population_mode().run().generate_gif()
+	# Store arguments as kwargs
+	for argv in given_args:
+		try:
+			key, value = argv.split('=')
+		except ValueError as e:
+			message = f"{argv} is not valid. Arguments must be 'argument=value' with no whitespace."
+			raise e from ValueError(message)
+
+		# Handle population kwargs
+		if key in pop_args:
+			if value == "False":
+				value = False
+			twargs[key] = bool(value)
+			continue
+
+		# Check that kwargs are valid
+		assert key in possible_args, f"{key} is not a valid kwarg. kwargs must be one of:{possible_args}"
+
+		try:
+
+			# Parse all integer arguments
+			if key in int_args:
+				kwargs[key] = int(value)
+
+			# Float Arguments
+			if key in float_args:
+				kwargs[key] = float(value)
+
+			# Parse field size
+			if key == "field_size":
+				values = value.strip("()").split(",")
+				tuple_value = tuple(int(v) for v in values)
+				kwargs[key] = tuple_value
+
+
+			# Parse player script
+			if key == "players":
+				if value[-3:].lower() == ".py":
+					value = value[:-3]
+				kwargs[key] = value
+			
+		except ValueError as e:
+			# Message written here for formatting and terminal readability
+			message = (f"Invalid value for {key}={value}. "
+						"this kwarg must be an integers.")
+			raise e from ValueError(message)
+
+
+	population_mode(**kwargs).run(**pwargs).generate_gif()
 	return 0

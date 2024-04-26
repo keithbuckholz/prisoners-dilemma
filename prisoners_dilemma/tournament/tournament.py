@@ -15,14 +15,21 @@ from inspect import isfunction
 from prisoners_dilemma import bots
 
 def import_user_bots(filename):
+	"""
+	This function imports a users file full of player algorithms.
+	"""
+	# If user attempting to skip import, do not import. Return 0
+	if filename==None or filename=="None":
+		return 0
+
 	try:
 		# Try to import the package
 		module = importlib.import_module(filename)
 		return module
 	
-	except ImportError:
-		print(f"Error: Unable to import '{filename}'.")
-		return 1
+	except ImportError as e:
+		message = f"Error: Unable to import '{filename}'."
+		raise e from ImportError(message)
 
 def define_players(players):
 	"""
@@ -34,6 +41,8 @@ def define_players(players):
 	
 	# If defined, import player algorithms
 	if not players==None:
+		players = import_user_bots(players)
+
 		user_bots = [getattr(players, item) for item in dir(players) 
     	               if isfunction(getattr(players, item))]
 		list_of_players.extend(user_bots)
@@ -54,12 +63,14 @@ class dilemma_tournament():
 	each algorithm against every other algorithm and prints the final results.
 	"""
 	
-	def __init__(self, players=None, n_rounds=None):
+	def __init__(self, players=None, n_rounds=None, rng_seed=None):
 		# Player Algorithms
 		self.players = define_players(players)
+
 		# Number of rounds in each matchup
 		self.n_rounds = n_rounds
-		self.rng = np.random.default_rng()
+		self.rng = np.random.default_rng(rng_seed)
+
 		# Instance attirbutes for tracking wins/losses
 		self.all_results = []
 		self.readable_results = []
@@ -143,7 +154,7 @@ class dilemma_tournament():
 
 		return self
 
-	def tournament(self, show_scores=True, show_match_info=False):
+	def tournament(self, show_scores=True, return_all_results=False, return_scores=False):
 		"""
 		This method runs a tournament, testing all players against all other players.
 
@@ -160,11 +171,29 @@ class dilemma_tournament():
 			for bot_2 in self.players[ii+1:]:
 				self.all_results.append(self.matchup(bot_1, bot_2))
 
+		if not self.n_rounds:
+			n_rounds = 200
+		else:
+			n_rounds = self.n_rounds
+		
+		max_points = n_rounds * (len(self.players) - 1) * 3
+		min_points = n_rounds * (len(self.players) - 1) * -1
+		perf_coop = n_rounds * (len(self.players) - 1) * 2
+
+		benchmarks = ("Benchmarks - Exact if n_rounds is defined\n"
+		"------------------------------ \n"
+		f"Approximate Maximum Points: {max_points} \n"
+		f"Approximate Minimum Points: {min_points} \n"
+		f"Perfect Cooperation: {perf_coop} \n")
+
 		if show_scores:
+			print("\n" + benchmarks)
 			for bot, score in self.final_scores.items():
 				print(f"{bot}: {score}")
-		if show_match_info:
-			print(self.all_results)
+		if return_all_results:
+			return self.all_results
+		if return_scores:
+			return self.final_scores
 		return self
 	
 
@@ -176,20 +205,51 @@ def tournament():
 	Runs tournament with built-in bots in the command line
 	"""
 
-	module=None
+	# Possible arguments
+	possible_args = ["players", "n_rounds", "rng_seed"]
+	tourni_args = ["show_scores", "return_scores", "return_all_results"]
+	given_args = sys.argv[1:]
 
-	# If player define bot file to include
-	if len(sys.argv) > 1:
-		# Parse user input
-		players = sys.argv[1]
-		if players[-3:].lower == ".py":
-			players = players[:-3]
+	kwargs = {}
+	twargs = {}
 
-		# Import user algorithms, and set variable to track module
-		module = import_user_bots(players)
+	# Store arguments as kwargs
+	for argv in given_args:
+		try:
+			key, value = argv.split('=')
+		except ValueError as e:
+			message = f"{argv} is not valid. Arguments must be 'argument=value' with no whitespace."
+			raise e from ValueError(message)
 
-	# Run tournament. If user did not define file, module==None
-	dilemma_tournament(players=module).tournament()
+		# Handle Tournament kwargs
+		if key in tourni_args:
+			if value == "False":
+				value = False
+			twargs[key] = bool(value)
+			continue
+
+		# Check that kwargs are valid
+		assert key in possible_args, f"{key} is not a valid kwarg. kwargs must be one of:{possible_args}"
+
+		try:
+
+			# All arguments other that players are integers
+			if key != "players":
+				kwargs[key] = int(value)
+
+			# Parse player script
+			if key == "players":
+				if value[-3:].lower() == ".py":
+					value = value[:-3]
+				kwargs[key] = value
+			
+		except ValueError as e:
+			# Message written here for formatting and terminal readability
+			message = (f"Invalid value for {key}={value}. "
+						"this kwarg must be an integers.")
+			raise e from ValueError(message)
+
+	dilemma_tournament(**kwargs).tournament(**twargs)
 	return 0
 
 
