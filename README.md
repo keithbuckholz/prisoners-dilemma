@@ -18,8 +18,10 @@ dilemma-credits
 ```
 
 dilemma-tournaments and -population have several additional arguments which can be given to modify the respective simulation. For more details on possible arguments see the following entries:
-<a id="prisoners_dilemma.tournament.tournament.tournament">prisoners-dilemma.tournament.tournament.tournament</a>
-<a id="prisoners_dilemma.population.population.population">prisoner-dilemma.population.population.population</a>
+
+<a id="prisoners_dilemma.tournament.tournament.tournament"></a>prisoners-dilemma.tournament.tournament.tournament
+
+<a id="prisoners_dilemma.population.population.population"></a>prisoner-dilemma.population.population.population
 
 
 dilemma-tournament will run a series of dilemmas to test every included decision making algorithm against every other included algorithm. 
