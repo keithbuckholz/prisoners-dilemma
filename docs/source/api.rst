@@ -1,4 +1,4 @@
 .. autosummary::
     :toctree: generated
 
-    prisoners-dilemma
+    prisoners_dilemma
