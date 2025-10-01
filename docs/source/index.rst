@@ -16,10 +16,9 @@ api and a README page or two.
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
    usage
    api
-
-
 
 Indices and tables
 ==================
